@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='priceTag.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+   
+</head>
+<body>
+    <header class="header" style="color: black; background-color: white;">
+        <div class="container">
+          
+            <a href="/index.html" class="logo">Intelligent Bots</a>
+            <i class="ri-robot-2-fill"></i>
+            
+            <ul class="nav-list">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="{{ url_for('prices') }}">Prices</a></li>
+                <li><a href="{{ url_for('teams') }}">Members</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+            <button class="nav-toggle">
+                <i class="ri-menu-line menu"></i>
+                <i class="ri-close-large-line close"></i>
+            </button>
+        </div>
+     </header>
+
+    <main>
+        <!-- Hero -->
+                  <div class="stack-area">
+                    <div class="left">
+                      <div class="title">The free flashcard maker built to make your life easier.</div>
+                      <div class="sub-title">
+                        Everything you need to create flashcards efficiently and study them in one place. You can even study sets made by classmates or look through millions of flashcard decks from other students.
+                        <br />
+                        <button>Create a flashcard Set</button>
+                      </div>
+                    </div>
+                    <div class="right">
+                    <div class="card">
+                        <div class="sub">Automate Your Study</div>
+                        <div class="content">Generate Flashcards from Your Notes or Documents
+                        </div>
+                    </div>
+                      <div class="card">
+                        <div class="sub">Simplify Complexity</div>
+                        <div class="content">Break Down Complex Topics into Bite-Sized Questions</div>
+                      </div>
+                      <div class="card">
+                        <div class="sub">Personalized Progress</div>
+                        <div class="content">Leverage AI for Personalized Learning</div>
+                      </div>
+                      <div class="card">
+                        <div class="sub">Engage with Multimedia</div>
+                        <div class="content">Incorporate Multimedia and Context</div>
+                      </div>
+                     
+                    </div>
+                  </div>
+                
+            
+                </main>
+        <!-- other -->
+           <!-- Site footer -->
+           <footer class="p-4 bg-white md:p-8 lg:p-10 dark:bg-gray-800">
+            <div class="mx-auto max-w-screen-xl text-center">
+                <a href="#" class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white">
+                    
+                    Intelligent Bots  
+                </a>
+                <p class="my-6 text-gray-500 dark:text-gray-400">Revolutionizing learning with AI-powered flashcards that adapt to your knowledge and accelerate your mastery.</p>
+                <ul class="flex flex-wrap justify-center items-center mb-6 text-gray-900 dark:text-white">
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6 ">About</a>
+                    </li>
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6">Premium</a>
+                    </li>
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6 ">Campaigns</a>
+                    </li>
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6">News</a>
+                    </li>
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6">Learning Program</a>
+                    </li>
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6">FAQs</a>
+                    </li>
+                    <li>
+                        <a href="#" class="mr-4 hover:underline md:mr-6">Contact</a>
+                    </li>
+                </ul>
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">©2025<a href="#" class="hover:underline"><i>Copyright™</i></a>All Rights Reserved.</span>
+            </div>
+          </footer>
+
+        
+
+</body>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</html>

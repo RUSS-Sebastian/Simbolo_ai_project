@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Team</title>
+    <!--Google Fonts Icons Font Awesome-->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp|Material+Icons+Two+Tone"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      :root {
+        --primary: rgb(0, 0, 0);
+        --secondary: rgb(255, 124, 10);
+      }
+      body {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      .center {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .team {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        font-family: poppins;
+      }
+      .title {
+        font-size: 40px;
+        font-weight: 700;
+        margin-bottom: 120px; /* Added margin-bottom */
+      }
+
+      .profiles {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Evenly spaces the profiles */
+        flex-wrap: wrap; /* Allow the profiles to wrap if necessary */
+        gap: 20px; /* Adjust the space between items */
+        }
+
+        .profile {
+        width: calc(25% - 20px); /* Make each profile 25% of the container minus the gap space */
+        height: fit-content;
+        min-width: 300px; /* Minimum width for each profile */
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-direction: column;
+        padding-top: 20px;
+        margin: 0;
+        max-height: 100px;
+        transition: 0.5s ease-in-out;
+        }
+
+      .profile img {
+        width: 100px; /* Increased from 40px to 100px */
+        height: 100px; /* Increased from 40px to 100px */
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        }
+
+      .details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .details span {
+        font-weight: 300;
+      }
+      .card {
+        width: 320px;
+        height: 300px;
+        margin-bottom: 20px;
+        background: var(--primary);
+        box-sizing: border-box;
+        padding: 20px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: white;
+        border-radius: 6mm;
+        position: relative;
+      }
+      .head {
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: left;
+        margin-bottom: 5px;
+      }
+      .head img {
+        margin: 0;
+        width: 60px;
+        height: 60px;
+        border-radius: 5mm;
+      }
+      .name {
+        font-size: 16px;
+        font-weight: 200;
+        width: fit-content;
+        margin-left: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 0 8px;
+        border-radius: 3mm;
+      }
+      .content {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 15px;
+        position: relative;
+      }
+      .role {
+        font-weight: 200;
+        font-size: 14px;
+      }
+      .icons {
+        backdrop-filter: blur(9px) saturate(180%);
+        -webkit-backdrop-filter: blur(9px) saturate(180%);
+        background: rgba(255, 255, 255, 0.4);
+        width: 100%;
+        height: fit-content;
+        box-sizing: border-box;
+        padding: 0 20px;
+        border-radius: 7mm;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+      .content::before {
+        position: absolute;
+        content: "";
+        top: 100%;
+        left: 70%;
+        transform: translate(-50%, 0);
+        background: var(--secondary);
+        width: 60px;
+        height: 30px;
+        filter: blur(30px);
+      }
+      .icons a {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: 0.35s;
+      }
+      .icons a:hover {
+        background: white;
+        color: var(--primary);
+        border-radius: 50%;
+      }
+      .card::before {
+        position: absolute;
+        content: "location_pin";
+        font-family: "Material Icons";
+        color: var(--primary);
+        font-size: 85px;
+        top: calc(100% - 7px);
+        left: 50%;
+        transform: translate(-50%, 0) rotate(180deg);
+      }
+      .profile:hover {
+        max-height: 500px;
+      }
+      .profile:hover #picture {
+        border: 5px solid var(--primary);
+      }
+      .profile:hover .card {
+        display: flex;
+        animation: fade 0.5s ease-in-out;
+      }
+      @keyframes fade {
+        0% {
+          display: none;
+          opacity: 0;
+        }
+        1%,
+        50% {
+          display: flex;
+          opacity: 0;
+        }
+        100% {
+          display: flex;
+          opacity: 1;
+        }
+      }
+      .profile:nth-child(odd) {
+        --secondary: rgb(0, 0, 0);
+        --primary: rgb(255, 124, 10);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <div class="team">
+        <div class="title">Our Smart Team Members</div>
+        <div class="profiles">
+
+          <div class="profile">
+            <div class="card">
+              <div class="head">
+                <img src="{{ url_for('static', filename='images/STA.png') }}" alt="Profile Image" />
+                <div class="name">Shin Thant Aung</div>
+              </div>
+              <div class="content">
+                <div class="role">CEO of Company</div>
+                Learning AI at Simbolo to unlock new innovations. Excited about the future of machine learning and its applications in solving global challenges.
+              </div>
+              <div class="icons">
+                <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                <a href=""><i class="fa-brands fa-github"></i></a>
+                <a href=""><i class="fa-solid fa-envelope"></i></a>
+              </div>
+              <div class="pattern"></div>
+            </div>
+            <img src="{{ url_for('static', filename='images/STA.png') }}" alt="Profile Image" />
+            <div class="details">
+              Shin Thant Aung
+              <span>CTO of company</span>
+            </div>
+          </div>
+
+          <div class="profile">
+            <div class="card">
+              <div class="head">
+                <img src="../images/avatar 3.png" alt="" />
+                <div class="name">Han Thar Soe</div>
+              </div>
+              <div class="content">
+                <div class="role">ML Engineer</div>
+                Diving into AI at Simbolo with a curiosity for automation and intelligent systems. Constantly exploring how AI reshapes industries.
+              </div>
+              <div class="icons">
+                <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                <a href=""><i class="fa-brands fa-github"></i></a>
+                <a href=""><i class="fa-solid fa-envelope"></i></a>
+              </div>
+              <div class="pattern"></div>
+            </div>
+            <img src="../images/avatar 3.png" alt="" id="picture" />
+            <div class="details">
+              Han Thar Soe
+              <span>ML Engineer</span>
+            </div>
+          </div>
+
+          <div class="profile">
+            <div class="card">
+              <div class="head">
+                <img src="{{ url_for('static', filename='images/SMT.png') }}" alt="Profile Image" />
+
+                <div class="name">San Min Tun</div>
+              </div>
+              <div class="content">
+                <div class="role">AI Engineer</div>
+                On a journey to master AI at Simbolo, fascinated by the intersection of technology and human intelligence. Ready to build the future with AI
+              </div>
+              <div class="icons">
+                <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                <a href=""><i class="fa-brands fa-github"></i></a>
+                <a href=""><i class="fa-solid fa-envelope"></i></a>
+              </div>
+              <div class="pattern"></div>
+            </div>
+            <img src="{{ url_for('static', filename='images/SMT.png') }}" alt="Profile Image" />
+
+            <div class="details">
+              San Min Tun
+              <span>AI Engineer</span>
+            </div>
+          </div>
+
+          <div class="profile">
+            <div class="card">
+              <div class="head">
+                <img src="{{ url_for('static', filename='images/HMS.png') }}" alt="Profile Image" />
+
+                <div class="name">Han Min Soe</div>
+              </div>
+              <div class="content">
+                <div class="role">Frontend Developer</div>
+                Aspiring AI enthusiast at Simbolo, exploring the endless possibilities of artificial intelligence. Passionate about leveraging AI for real-world impact.
+              </div>
+              <div class="icons">
+                <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://github.com/Hanmsoe17"><i class="fa-brands fa-github"></i></a>
+                <a href="mailto:hanminsoe356@gmail.com">
+                    <i class="fa-solid fa-envelope"></i>
+                  </a>
+              </div>
+            </div>
+            <img src="{{ url_for('static', filename='images/HMS.png') }}" alt="Profile Image" />
+            <div class="details">
+              Han Min Soe
+              <span>Frontend Developer</span>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
