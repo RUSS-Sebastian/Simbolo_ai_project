@@ -47,9 +47,9 @@ body {
   }
   .sub-title button {
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: px;
-    padding: 15px 30px;
-    background: rgb(117, 0, 86);
+    font-size: 17px;
+    padding: 12px 23px;
+    background: rgb(211, 16, 159);
     color: white;
     border-radius: 8mm;
     cursor: pointer;
@@ -71,16 +71,16 @@ body {
     transition: 0.5s ease-in-out;
   }
   .card:nth-child(1) {
-    background: rgb(64, 122, 255);
+    background: rgb(22, 177, 212);
   }
   .card:nth-child(2) {
-    background: rgb(221, 62, 88);
+    background: rgb(111, 37, 230);
   }
   .card:nth-child(3) {
-    background: rgb(186, 113, 245);
+    background: rgb(170, 81, 244);
   }
   .card:nth-child(4) {
-    background: rgb(247, 92, 208);
+    background: rgb(233, 153, 67);
   }
 
   /*Styling for the card content starts here...*/
@@ -277,9 +277,9 @@ h1,h2,h3,h4{
 .logo {
     font-size: 3.3rem;
     color: inherit;
-    font-weight: 600;
+    font-weight: 500;
     position: relative; /* You can set your desired position */
-    margin-left: 50px; /* Adjust if necessary */
+    margin-left: -50px; /* Adjust if necessary */
     padding: 0; /* Check if padding is also altered */
     display: inline-block; /* If the display property is causing a shift */
 }
