@@ -20,5 +20,9 @@ def Essay():
 def FlashCard():
     return render_template('FlashCard.html')
 
+@app.route('/input')
+def inputPage():
+    return render_template('input.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
