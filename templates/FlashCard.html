@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard App</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         body {
             background-color: #f8f9fa;
             padding: 20px;
         }
-        
+
         .flashcard-container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         .flashcard {
             height: 300px;
             perspective: 1000px;
             cursor: pointer;
             margin-bottom: 20px;
         }
-        
+
         .flashcard-inner {
             position: relative;
             width: 100%;
@@ -33,11 +33,11 @@
             transition: transform 0.6s;
             transform-style: preserve-3d;
         }
-        
+
         .flashcard.flipped .flashcard-inner {
             transform: rotateY(180deg);
         }
-        
+
         .flashcard-front, .flashcard-back {
             position: absolute;
             width: 100%;
@@ -48,30 +48,30 @@
             align-items: center;
             justify-content: center;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
-        
+
         .flashcard-front {
             background-color: #ffffff;
             color: #212529;
         }
-        
+
         .flashcard-back {
             background-color: #6c757d;
             color: white;
             transform: rotateY(180deg);
         }
-        
+
         .card-content {
             font-size: 24px;
             font-weight: 500;
         }
-        
+
         .progress-container {
             margin-bottom: 20px;
         }
-        
+
         .card-hint {
             font-size: 14px;
             color: #6c757d;
@@ -88,7 +88,7 @@
             <div class="col-md-8">
                 <div class="flashcard-container">
                     <h1 class="text-center mb-4">Flashcards</h1>
-                    
+
                     <div class="progress-container">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Card <span id="current-card">1</span> of <span id="total-cards">5</span></span>
@@ -98,7 +98,7 @@
                             <div id="progress-bar" class="progress-bar bg-primary" role="progressbar" style="width: 20%"></div>
                         </div>
                     </div>
-                    
+
                     <div class="flashcard" id="flashcard">
                         <div class="flashcard-inner">
                             <div class="flashcard-front">
@@ -111,12 +111,12 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between">
                         <button id="prev-btn" class="btn btn-outline-primary">Previous</button>
                         <button id="next-btn" class="btn btn-primary">Next</button>
                     </div>
-                    
+
                     <div class="mt-4">
                         <button id="add-card-btn" class="btn btn-success w-100">Add New Card</button>
                     </div>
@@ -124,7 +124,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Add Card Modal -->
     <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -150,10 +150,10 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
         // Sample flashcard data
         const flashcards = [
@@ -163,9 +163,9 @@
             { question: "What is Bootstrap?", answer: "Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first front-end web development." },
             { question: "What is a DOM?", answer: "The Document Object Model (DOM) is a programming interface for web documents. It represents the page so that programs can change the document structure, style, and content." }
         ];
-        
+
         let currentCardIndex = 0;
-        
+
         // DOM elements
         const flashcardElement = document.getElementById('flashcard');
         const questionElement = document.getElementById('question');
@@ -178,80 +178,88 @@
         const cardStatusElement = document.getElementById('card-status');
         const addCardButton = document.getElementById('add-card-btn');
         const saveCardButton = document.getElementById('save-card-btn');
-        
+
         // Initialize
         function updateCard() {
             questionElement.textContent = flashcards[currentCardIndex].question;
             answerElement.textContent = flashcards[currentCardIndex].answer;
             currentCardElement.textContent = currentCardIndex + 1;
             totalCardsElement.textContent = flashcards.length;
-            
+
             // Update progress bar
             const progressPercentage = ((currentCardIndex + 1) / flashcards.length) * 100;
             progressBarElement.style.width = `${progressPercentage}%`;
-            
+
             // Update button states
             prevButton.disabled = currentCardIndex === 0;
             nextButton.disabled = currentCardIndex === flashcards.length - 1;
-            
+
             // Reset flip state
             flashcardElement.classList.remove('flipped');
             cardStatusElement.textContent = 'Question';
         }
-        
+
         // Event listeners
-        flashcardElement.addEventListener('click', function() {
+        flashcardElement.addEventListener('click', function () {
             this.classList.toggle('flipped');
             cardStatusElement.textContent = this.classList.contains('flipped') ? 'Answer' : 'Question';
         });
-        
-        prevButton.addEventListener('click', function() {
+
+        prevButton.addEventListener('click', function () {
             if (currentCardIndex > 0) {
                 currentCardIndex--;
                 updateCard();
             }
         });
-        
-        nextButton.addEventListener('click', function() {
+
+        nextButton.addEventListener('click', function () {
             if (currentCardIndex < flashcards.length - 1) {
                 currentCardIndex++;
                 updateCard();
             }
         });
-        
+
         // Add new card functionality
-        addCardButton.addEventListener('click', function() {
+        addCardButton.addEventListener('click', function () {
             const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
             addCardModal.show();
         });
-        
-        saveCardButton.addEventListener('click', function() {
+
+        saveCardButton.addEventListener('click', function () {
             const newQuestion = document.getElementById('new-question').value.trim();
             const newAnswer = document.getElementById('new-answer').value.trim();
-            
+
             if (newQuestion && newAnswer) {
+                // Add the new card to the flashcards array
                 flashcards.push({ question: newQuestion, answer: newAnswer });
-                
-                // Clear form
+
+                // Clear the form inputs
                 document.getElementById('new-question').value = '';
                 document.getElementById('new-answer').value = '';
-                
-                // Close modal
+
+                // Close the modal
                 const addCardModal = bootstrap.Modal.getInstance(document.getElementById('addCardModal'));
                 addCardModal.hide();
-                
-                // Update total cards
+
+                // Update the total number of cards
                 totalCardsElement.textContent = flashcards.length;
-                
-                // Enable next button if we were on the last card
+
+                // If the new card is added after the last card, enable the "Next" button
                 if (currentCardIndex === flashcards.length - 2) {
                     nextButton.disabled = false;
                 }
+
+                // If the new card is added while on the last card, update the UI
+                if (currentCardIndex === flashcards.length - 1) {
+                    updateCard();
+                }
+            } else {
+                alert('Please fill in both the question and answer fields.');
             }
         });
-        
+
         // Initialize the first card
         updateCard();
     </script>
 </body>
-</html>
+</html>  
