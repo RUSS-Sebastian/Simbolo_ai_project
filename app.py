@@ -58,30 +58,33 @@ def extract_text_from_pdf(pdf_path):
         text += page.get_text("text") + "\n"
     return text
 
-def generate_questions_and_answers(context, num_questions=6, difficulty="medium"):
-    model_path_qg = "D:/model_for_Q/final_ver"
-    model_path_ag = "D:/model_for_Q/original_t5_base_before_finetune"
-    
-    tokenizer_qg = T5Tokenizer.from_pretrained(model_path_qg)
-    model_qg = T5ForConditionalGeneration.from_pretrained(model_path_qg)
-    
-    tokenizer_ag = T5Tokenizer.from_pretrained(model_path_ag)
-    model_ag = T5ForConditionalGeneration.from_pretrained(model_path_ag)
-    
-    prompt = f"Generate {num_questions} {difficulty} diverse questions based on the following paragraph: {context}"
-    input_ids = tokenizer_qg(prompt, return_tensors="pt").input_ids
-    output_ids = model_qg.generate(input_ids, max_length=100, num_return_sequences=num_questions, do_sample=True, top_k=50)
-    questions = [tokenizer_qg.decode(output, skip_special_tokens=True) for output in output_ids]
-    
-    answers = []
-    for question in questions:
-        input_text = f"question: {question} context: {context}"
-        inputs = tokenizer_ag(input_text, return_tensors="pt")
-        output = model_ag.generate(**inputs, max_length=30, repetition_penalty=2.5, num_beams=5)
-        answer = tokenizer_ag.decode(output[0], skip_special_tokens=True)
+def QuestionGenerator(context,no_qa,difficulty):
+
+  model_name = r"D:\model_for_Q\final_ver"
+  tokenizer = T5Tokenizer.from_pretrained(model_name)
+  model = T5ForConditionalGeneration.from_pretrained(model_name)
+  prompt = f"Generate five {difficulty} diverse questions based on the following paragraph: {context}"
+  # Tokenize input
+  input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+
+  # Generate multiple questions
+  output_ids = model.generate(input_ids, max_length=100, num_return_sequences=no_qa, do_sample=True, top_k=50)
+  questions = [tokenizer.decode(output, skip_special_tokens=True) for output in output_ids]
+  return questions
+
+def AnswerGenerator(context,questions):
+  model_name = "D:\model_for_Q\original_t5_base_before_finetune"  # You can use "t5-base" or "flan-t5" for better performance
+  tokenizer = T5Tokenizer.from_pretrained(model_name)
+  model = T5ForConditionalGeneration.from_pretrained(model_name)
+  answers= []
+  for i in range(len(questions)):
+        input_text = f"question: {questions[i]} context: {context}"
+        inputs = tokenizer(input_text, return_tensors="pt")
+        output = model.generate(**inputs, max_length=30, repetition_penalty=2.5, num_beams=5)
+        answer = tokenizer.decode(output[0], skip_special_tokens=True)
         answers.append(answer)
-    
-    return list(zip(questions, answers))
+
+  return answers
 
 @app.route("/")
 def home():
@@ -92,8 +95,8 @@ def teams():
     return render_template("team.html")
 
 @app.route("/essay")
-def essay():
-    return render_template("essay.html")
+def Essay():
+    return render_template("Essay.html")
 
 
 @app.route("/flashcard")
