@@ -15,7 +15,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-API_KEY = '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'
+API_KEY = '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'
 
 # Initialize Flask-SocketIO
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -57,6 +57,16 @@ def extract_text_from_pdf(pdf_path):
     for page in doc:
         text += page.get_text("text") + "\n"
     return text
+
+def read_text_file(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()  # Read the entire content of the file
+        return content
+    except FileNotFoundError:
+        return "File not found."
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
 
 def QuestionGenerator(context,no_qa,difficulty):
 
@@ -123,6 +133,56 @@ def upload_file():
     thread.start()
     
     return jsonify({"message": "File uploaded successfully. Processing started."})
+
+@app.route("/upload-text", methods=["POST"])
+def upload_text():
+    # Get the text from the incoming request
+    data = request.get_json()
+    text = data.get('text')
+    
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+    
+    # Save the text to a temporary file or directly process it
+    # In this case, we simulate a temporary file by saving it to the system
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], "uploaded_text.txt")
+    with open(file_path, 'w') as f:
+        f.write(text)
+    
+    # Start a background thread to process the text (same as file processing)
+    thread = threading.Thread(target=process_text, args=(file_path,))
+    thread.start()
+    
+    return jsonify({"message": "Text uploaded successfully. Processing started."})
+
+def process_text(file_path):
+    """Processes the uploaded file and emits progress updates."""
+    global qa_pairs  # Ensure we can modify the global variable
+    
+    with app.app_context():
+        socketio.emit("progress_update", {"progress": 25})
+        time.sleep(2)
+        extracted_text = read_text_file(file_path)
+        ai_cleaned_text = clean_text_ai(extracted_text)
+        final_cleaned_text = clean_text(ai_cleaned_text)
+
+        socketio.emit("progress_update", {"progress": 50})
+        time.sleep(2)
+        questions = QuestionGenerator(final_cleaned_text, 6, "medium")
+        
+
+        socketio.emit("progress_update", {"progress": 70})
+        time.sleep(2)
+        answers = AnswerGenerator(final_cleaned_text, questions)
+
+        socketio.emit("progress_update", {"progress": 100})
+        time.sleep(2)
+        # Store generated Q&A pairs in global variable
+        qa_pairs = [{"question": q, "answer": a} for q, a in zip(questions, answers)]
+        
+
+        # Redirect to flashcard page
+        socketio.emit("redirect", {"url": url_for("FlashCard")})
 
 def process_file(file_path):
     """Processes the uploaded file and emits progress updates."""

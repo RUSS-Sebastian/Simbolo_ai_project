@@ -15,6 +15,10 @@
             cursor: pointer;
             transition: background 0.3s ease-in-out;
             height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .upload-box:hover {
@@ -31,7 +35,7 @@
         }
 
          /* Hide progress bar initially */
-         #progress-container {
+        #progress-container {
             display: none;
         }     
 
@@ -40,43 +44,47 @@
 </head>
 <body>
 
-<div class="container mt-5">
-    <h2 class="text-dark text-center mb-4"><i class="bi bi-mortarboard"></i>Intelligent Bots</h2>
-
-    <!-- Tabs Navigation -->
-    <ul class="nav nav-pills mb-3 justify-content-center" id="uploadTabs">
-        <li class="nav-item">
-            <button class="nav-link active" data-type="document">Document</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-type="text">Text</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-type="video">Video</button>
-        </li>
-    </ul>
-
-    <!-- File Upload Box -->
-    <div class="upload-box text-center p-5 border rounded" id="drop-area">
-        <input type="file" id="file-input" hidden>
-        <div class="upload-content">
-            <i class="bi bi-cloud-upload display-4 text-dark"></i>
-            <p class="mt-3">Drag a document here or click to browse. Only support PDF files.</p>
+    <div class="container mt-5">
+        <h2 class="text-dark text-center mb-4"><i class="bi bi-mortarboard"></i> Intelligent Bots</h2>
+    
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-pills mb-3 justify-content-center" id="uploadTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-type="document">Document</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-type="text">Text</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-type="video">Video</button>
+            </li>
+        </ul>
+    
+        <!-- File Upload Box -->
+        <div class="upload-box text-center p-5 border rounded" id="drop-area">
+            <input type="file" id="file-input" hidden>
+            <div class="upload-content">
+                <i class="bi bi-cloud-upload display-4 text-dark"></i>
+                <p class="mt-3">Drag a document here or click to browse. Only support PDF files.</p>
+            </div>
         </div>
-    </div>
-
-    <!-- Bootstrap Progress Bar -->
-    <div class="mt-3" id="progress-container">
-        <div class="progress">
-            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
-                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                0%
+    
+        <!-- Text Input Box (Hidden Initially) -->
+        <div id="text-input-container" class="mt-3" style="display: none;">
+            <textarea id="text-input" class="form-control" rows="6" placeholder="Enter your text here..."></textarea>
+            <button class="btn btn-dark mt-2" id="submit-text">Submit</button>
+        </div>
+    
+        <!-- Bootstrap Progress Bar -->
+        <div class="mt-3" id="progress-container" style="display: none;">
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                    role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    0%
+                </div>
             </div>
         </div>
     </div>
-
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Add Socket.IO script here -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
@@ -84,52 +92,93 @@
 
 </body>
 <script>
+    
     document.addEventListener("DOMContentLoaded", () => {
-        const fileInput = document.getElementById("file-input");
-        const dropArea = document.getElementById("drop-area");
-        const tabs = document.querySelectorAll(".nav-link");
-        const progressBar = document.getElementById("progress-bar");
-        const progressContainer = document.getElementById("progress-container");
-        const socket = io();
+    const fileInput = document.getElementById("file-input");
+    const dropArea = document.getElementById("drop-area");
+    const textContainer = document.getElementById("text-input-container");
+    const textInput = document.getElementById("text-input");
+    const submitTextButton = document.getElementById("submit-text");
+    const tabs = document.querySelectorAll(".nav-link");
+    const progressBar = document.getElementById("progress-bar");
+    const progressContainer = document.getElementById("progress-container");
+    const socket = io();
 
-        // Click to browse
-        dropArea.addEventListener("click", () => {
-            fileInput.click();
-        });
+    // Tab Switching
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            const selectedType = tab.getAttribute("data-type");
 
-        // Drag & Drop functionality
-        dropArea.addEventListener("dragover", (event) => {
-            event.preventDefault();
-            dropArea.style.background = "#e9f5ff";
+            // Show or hide the appropriate input container based on selected tab
+            if (selectedType === "document") {
+                dropArea.style.display = "block"; // Show file input area
+                textContainer.style.display = "none"; // Hide text input area
+            } else if (selectedType === "text") {
+                dropArea.style.display = "none"; // Hide file input area
+                textContainer.style.display = "block"; // Show text input area
+            } else if (selectedType === "video") {
+                dropArea.style.display = "none"; // Hide file input area
+                textContainer.style.display = "none"; // Hide text input area
+                // You can add logic for handling video upload here
+                alert('Video option selected. (Implement video upload functionality)');
+            }
         });
+    });
 
-        dropArea.addEventListener("dragleave", () => {
-            dropArea.style.background = "white";
-        });
+    // Click to browse (file input) in case of document option
+    dropArea.addEventListener("click", () => {
+        fileInput.click();
+    });
 
-        dropArea.addEventListener("drop", (event) => {
-            event.preventDefault();
-            handleFileUpload(event.dataTransfer.files[0]);
-        });
+    // Drag & Drop functionality for the file input (Only for Document)
+    dropArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dropArea.style.background = "#e9f5ff";
+    });
 
-        // Tab Switching
-        tabs.forEach(tab => {
-            tab.addEventListener("click", () => {
-                tabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-            });
-        });
+    dropArea.addEventListener("dragleave", () => {
+        dropArea.style.background = "white";
+    });
 
-        fileInput.addEventListener("change", (event) => {
-            handleFileUpload(event.target.files[0]);
-        });
+    dropArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        handleFileUpload(event.dataTransfer.files[0]);
+    });
+
+    // Handle text submission when user clicks "Submit" button
+    submitTextButton.addEventListener("click", () => {
+        const textData = textInput.value.trim();
+        if (!textData) {
+            alert("Please enter some text.");
+            return;
+        }
+
+        fetch("http://127.0.0.1:5000/upload-text", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: textData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Text submitted successfully:", data);
+            progressContainer.style.display = "block";
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    // Handle file upload using the file input (either from browse or drag-drop) - Only for Document
+    fileInput.addEventListener("change", (event) => {
+        handleFileUpload(event.target.files[0]);
+    });
 
     function handleFileUpload(file) {
         if (!file) return;
 
         let formData = new FormData();
         formData.append("file", file);
-        
+
         fetch("http://127.0.0.1:5000/upload", {
             method: "POST",
             body: formData
@@ -144,18 +193,19 @@
 
     // Listen for progress updates from Flask-SocketIO
     socket.on("progress_update", function(data) {
-            let progressValue = data.progress;
-            progressBar.style.width = progressValue + "%";
-            progressBar.setAttribute("aria-valuenow", progressValue);
-            progressBar.innerText = progressValue + "%";
-        });
-
-        // Redirect when processing is complete
-        socket.on("redirect", function(data) {
-            window.location.href = data.url;
+        let progressValue = data.progress;
+        progressBar.style.width = progressValue + "%";
+        progressBar.setAttribute("aria-valuenow", progressValue);
+        progressBar.innerText = progressValue + "%";
     });
 
-}); 
+    // Redirect when processing is complete
+    socket.on("redirect", function(data) {
+        window.location.href = data.url;
+    });
+});
+
+
 
 </script>
 </html>
