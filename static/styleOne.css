@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 50px;
+    text-align: center;
+}
+
+textarea {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}

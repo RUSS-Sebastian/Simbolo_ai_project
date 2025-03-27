@@ -3,480 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Essay Scoring System</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Essay Scoring System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4cc9f0;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4CAF50;
-            --warning-color: #ff9800;
-            --danger-color: #f44336;
+            --primary: #3498db;
+            --primary-hover: #2980b9;
+            --error: #e74c3c;
+            --success: #2ecc71;
         }
-        
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
             color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .progress-container {
+            margin: 1.5rem 0;
+            display: none;
+        }
+        progress {
+            width: 100%;
+            height: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .result-container {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary);
+        }
+        .score {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .feedback {
+            font-size: 1rem;
             line-height: 1.6;
         }
-        
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Roboto Slab', serif;
-            font-weight: 600;
-        }
-        
-        .app-container {
-            max-width: 1000px;
-            margin: 2rem auto;
-        }
-        
-        .app-card {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-        
-        .app-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-bottom: none;
-            padding: 1.5rem;
-        }
-        
-        .card-body {
-            padding: 2rem;
-        }
-        
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e0e0e0;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
-            border-color: var(--primary-color);
-        }
-        
-        textarea.form-control {
-            min-height: 200px;
-            line-height: 1.8;
-        }
-        
-        .btn {
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-        
-        .word-count {
-            font-size: 0.9rem;
-            color: #6c757d;
-            transition: color 0.3s ease;
-        }
-        
-        .word-count.warning {
-            color: var(--warning-color);
-        }
-        
-        .word-count.success {
-            color: var(--success-color);
-        }
-        
-        .criteria-card {
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .criteria-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .criteria-title {
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .score-section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .score-card {
-            text-align: center;
-            padding: 2rem;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-        }
-        
-        .score-value {
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            line-height: 1;
-            margin: 1rem 0;
-        }
-        
-        .feedback-item {
-            border-radius: 8px;
+        .alert {
             padding: 1rem;
+            border-radius: 0.5rem;
             margin-bottom: 1rem;
-            border-left: 4px solid var(--primary-color);
-            background-color: rgba(67, 97, 238, 0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .feedback-item:hover {
-            transform: translateX(5px);
-        }
-        
-        .feedback-category {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .loading {
             display: none;
-            text-align: center;
-            padding: 2rem;
         }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(67, 97, 238, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin: 0 auto 1rem;
+        .alert-error {
+            background-color: #fadbd8;
+            color: var(--error);
+            border-left: 4px solid var(--error);
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .word-count {
+            font-size: 0.875rem;
+            color: #7f8c8d;
+            text-align: right;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body>
-    <div class="container app-container">
-        <div class="app-card card">
-            <div class="card-header">
-                <h1 class="mb-0">AI Essay Scoring System</h1>
-                <p class="mb-0 mt-2">Submit your essay for intelligent evaluation and feedback</p>
-            </div>
-            <div class="card-body">
-                <!-- Essay Submission Form -->
-                <div id="submissionForm">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="criteria-card">
-                                <h5 class="criteria-title">Content & Development</h5>
-                                <p class="mb-0">Evaluates the quality, relevance, and development of ideas in your essay.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="criteria-card">
-                                <h5 class="criteria-title">Organization & Structure</h5>
-                                <p class="mb-0">Assesses the logical flow, coherence, and structural elements of your writing.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="criteria-card">
-                                <h5 class="criteria-title">Language Use & Vocabulary</h5>
-                                <p class="mb-0">Examines your word choice, language sophistication, and vocabulary diversity.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="criteria-card">
-                                <h5 class="criteria-title">Grammar & Mechanics</h5>
-                                <p class="mb-0">Evaluates grammar, punctuation, spelling, and sentence construction.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form id="essayForm">
-                        <div class="mb-4">
-                            <label for="essayTopic" class="form-label">Essay Topic</label>
-                            <select class="form-select" id="essayTopic" required>
-                                <option value="" selected disabled>Select a topic</option>
-                                <option value="technology">The Impact of Technology on Society</option>
-                                <option value="environment">Environmental Challenges in the 21st Century</option>
-                                <option value="education">The Future of Education</option>
-                                <option value="healthcare">Healthcare Access and Equity</option>
-                                <option value="other">Other (Custom Topic)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4" id="customTopicDiv" style="display: none;">
-                            <label for="customTopic" class="form-label">Custom Topic</label>
-                            <input type="text" class="form-control" id="customTopic" placeholder="Enter your custom topic">
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="essayText" class="form-label">Your Essay</label>
-                            <textarea class="form-control" id="essayText" rows="10" placeholder="Write your essay here..." required></textarea>
-                            <div class="word-count mt-2" id="wordCountContainer">
-                                Word Count: <span id="wordCount">0</span> 
-                                <span class="text-muted">(Recommended: 300-500 words)</span>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary" id="submitBtn">Submit Essay for Scoring</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Loading Animation -->
-                <div class="loading" id="loadingSection">
-                    <div class="loading-spinner"></div>
-                    <h4>Analyzing Your Essay</h4>
-                    <p>Our AI is carefully evaluating your writing...</p>
-                </div>
-
-                <!-- Results Section (Initially Hidden) -->
-                <div class="score-section" id="scoreSection">
-                    <h3 class="mb-4 text-center">Essay Evaluation Results</h3>
-                    
-                    <div class="score-card">
-                        <h4>Overall Score</h4>
-                        <div class="score-value" id="overallScore">--</div>
-                        <p class="text-muted">out of 100</p>
-                    </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">Score Breakdown</h5>
-                                    
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Content & Development</span>
-                                            <span id="contentScore">--/30</span>
-                                        </div>
-                                        <div class="progress mt-1">
-                                            <div id="contentProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Organization & Structure</span>
-                                            <span id="organizationScore">--/25</span>
-                                        </div>
-                                        <div class="progress mt-1">
-                                            <div id="organizationProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Language Use & Vocabulary</span>
-                                            <span id="languageScore">--/25</span>
-                                        </div>
-                                        <div class="progress mt-1">
-                                            <div id="languageProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Grammar & Mechanics</span>
-                                            <span id="grammarScore">--/20</span>
-                                        </div>
-                                        <div class="progress mt-1">
-                                            <div id="grammarProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">Essay Metrics</h5>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Word Count
-                                            <span class="badge bg-primary rounded-pill" id="metricsWordCount">--</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Sentence Count
-                                            <span class="badge bg-primary rounded-pill" id="metricsSentenceCount">--</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Average Sentence Length
-                                            <span class="badge bg-primary rounded-pill" id="metricsAvgSentenceLength">--</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Vocabulary Diversity
-                                            <span class="badge bg-primary rounded-pill" id="metricsVocabDiversity">--</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Detailed Feedback</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="feedbackContent">
-                                <!-- Feedback will be inserted here by your AI model -->
-                                <div class="feedback-item">
-                                    <div class="feedback-category">Overall Assessment</div>
-                                    <p class="mb-0" id="overallFeedback">Your AI model will provide overall feedback here.</p>
-                                </div>
-                                
-                                <div class="feedback-item">
-                                    <div class="feedback-category">Content & Development</div>
-                                    <p class="mb-0" id="contentFeedback">Your AI model will provide content feedback here.</p>
-                                </div>
-                                
-                                <div class="feedback-item">
-                                    <div class="feedback-category">Organization & Structure</div>
-                                    <p class="mb-0" id="organizationFeedback">Your AI model will provide organization feedback here.</p>
-                                </div>
-                                
-                                <div class="feedback-item">
-                                    <div class="feedback-category">Language Use & Vocabulary</div>
-                                    <p class="mb-0" id="languageFeedback">Your AI model will provide language feedback here.</p>
-                                </div>
-                                
-                                <div class="feedback-item">
-                                    <div class="feedback-category">Grammar & Mechanics</div>
-                                    <p class="mb-0" id="grammarFeedback">Your AI model will provide grammar feedback here.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" id="newEssayBtn">Evaluate Another Essay</button>
-                    </div>
-                </div>
-            </div>
+    <h1>Automatic Essay Scoring</h1>
+    
+    <div id="app">
+        <textarea id="essay-text" placeholder="Type or paste your essay here (minimum 50 words)..."></textarea>
+        <div class="word-count">Word count: <span id="word-count">0</span></div>
+        <button id="score-btn">Score My Essay</button>
+        
+        <div class="alert alert-error" id="error-container"></div>
+        
+        <div class="progress-container" id="progress-container">
+            <p id="progress-message">Processing your essay...</p>
+            <progress id="progress-bar" value="0" max="100"></progress>
+        </div>
+        
+        <div class="result-container" id="result-container">
+            <div class="score">Score: <span id="essay-score">0</span>/6</div>
+            <div class="feedback" id="essay-feedback"></div>
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Word count functionality with color change
-        document.getElementById('essayText').addEventListener('input', function() {
-            const text = this.value.trim();
-            const wordCount = text ? text.split(/\s+/).length : 0;
-            const wordCountElement = document.getElementById('wordCount');
-            const wordCountContainer = document.getElementById('wordCountContainer');
-            
-            wordCountElement.textContent = wordCount;
-            
-            // Update color based on word count
-            wordCountContainer.classList.remove('warning', 'success');
-            if (wordCount < 300) {
-                wordCountContainer.classList.add('warning');
-            } else if (wordCount >= 300 && wordCount <= 500) {
-                wordCountContainer.classList.add('success');
-            } else if (wordCount > 500) {
-                wordCountContainer.classList.add('warning');
-            }
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Socket.IO
+            const socket = io({
+                transports: ['websocket'],
+                reconnectionAttempts: 5,
+                timeout: 10000
+            });
 
-        // Custom topic toggle with animation
-        document.getElementById('essayTopic').addEventListener('change', function() {
-            const customTopicDiv = document.getElementById('customTopicDiv');
-            if (this.value === 'other') {
-                customTopicDiv.style.display = 'block';
-                customTopicDiv.style.animation = 'fadeIn 0.3s ease';
-            } else {
-                customTopicDiv.style.display = 'none';
-            }
-        });
+            // DOM elements
+            const essayText = document.getElementById('essay-text');
+            const scoreBtn = document.getElementById('score-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressMessage = document.getElementById('progress-message');
+            const resultContainer = document.getElementById('result-container');
+            const essayScore = document.getElementById('essay-score');
+            const essayFeedback = document.getElementById('essay-feedback');
+            const errorContainer = document.getElementById('error-container');
+            const wordCount = document.getElementById('word-count');
 
-        // Form submission with loading animation
-        // (This is just for UI demonstration - your AI model will handle the actual scoring)
-        document.getElementById('essayForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Connection status logging
+            socket.on('connect', () => {
+                console.log('Connected to server');
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+            });
+
+            socket.on('connect_error', (err) => {
+                showError('Connection error. Please refresh the page.');
+                console.error('Connection error:', err);
+            });
+
+            // Update word count
+            essayText.addEventListener('input', updateWordCount);
             
-            const essayText = document.getElementById('essayText').value.trim();
-            if (!essayText) {
-                alert('Please write your essay before submitting.');
-                return;
+            function updateWordCount() {
+                const text = essayText.value.trim();
+                const count = text ? text.split(/\s+/).length : 0;
+                wordCount.textContent = count;
             }
-            
-            // Show loading animation
-            document.getElementById('submissionForm').style.display = 'none';
-            document.getElementById('loadingSection').style.display = 'block';
-            
-            // Simulate AI processing time (you'll replace this with your actual AI model)
-            setTimeout(function() {
-                // Hide loading, show results
-                document.getElementById('loadingSection').style.display = 'none';
-                document.getElementById('scoreSection').style.display = 'block';
+
+            // Score button handler
+            scoreBtn.addEventListener('click', () => {
+                const text = essayText.value.trim();
+                const words = text.split(/\s+/).length;
                 
-                // Set word count in metrics (the rest will be filled by your AI model)
-                document.getElementById('metricsWordCount').textContent = essayText.split(/\s+/).length;
-            }, 2000);
-        });
+                // Validation
+                if (!text) {
+                    showError('Please enter an essay to score');
+                    return;
+                }
+                
+                if (words < 50) {
+                    showError(`Essay must be at least 50 words (current: ${words})`);
+                    return;
+                }
+                
+                // Start scoring process
+                startScoring(text);
+            });
 
-        // New essay button
-        document.getElementById('newEssayBtn').addEventListener('click', function() {
-            document.getElementById('essayForm').reset();
-            document.getElementById('wordCount').textContent = '0';
-            document.getElementById('wordCountContainer').classList.remove('warning', 'success');
-            document.getElementById('customTopicDiv').style.display = 'none';
-            
-            document.getElementById('scoreSection').style.display = 'none';
-            document.getElementById('submissionForm').style.display = 'block';
+            // Socket event handlers
+            socket.on('essay_progress', (data) => {
+                progressBar.value = data.progress;
+                progressMessage.textContent = data.message;
+            });
+
+            socket.on('essay_result', (data) => {
+                if (data && data.score !== undefined) {
+                    essayScore.textContent = data.score;
+                    essayFeedback.textContent = data.feedback;
+                    resultContainer.style.display = 'block';
+                    resultContainer.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showError('Invalid response from server');
+                }
+                resetUI();
+            });
+
+            socket.on('essay_error', (data) => {
+                showError(data.error || 'An error occurred during scoring');
+                resetUI();
+            });
+
+            // UI functions
+            function startScoring(text) {
+                hideError();
+                progressContainer.style.display = 'block';
+                resultContainer.style.display = 'none';
+                scoreBtn.disabled = true;
+                
+                fetch('/score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ essay: text })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error); });
+                    }
+                })
+                .catch(err => {
+                    showError(err.message);
+                    resetUI();
+                });
+            }
+
+            function resetUI() {
+                progressContainer.style.display = 'none';
+                scoreBtn.disabled = false;
+            }
+
+            function showError(message) {
+                errorContainer.textContent = message;
+                errorContainer.style.display = 'block';
+                errorContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function hideError() {
+                errorContainer.style.display = 'none';
+            }
+
+            // Initialize
+            updateWordCount();
         });
     </script>
 </body>
